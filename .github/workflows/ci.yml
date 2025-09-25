@@ -60,6 +60,16 @@ jobs:
       - name: Tests
         run: npm test
 
+      - name: Check coverage threshold
+        run: |
+          coverage=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+          echo "Current coverage: $coverage%"
+          if (( $(echo "$coverage < 80" | bc -l) )); then
+            echo "::error::Coverage is below 80% threshold (current: $coverage%)"
+            exit 1
+          fi
+          echo "Coverage meets threshold ✓"
+
       - name: set version
         id: set_version
         run: |
