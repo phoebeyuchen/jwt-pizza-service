@@ -29,7 +29,7 @@ beforeAll(async () => {
   testUserId = loginRes.body.user.id;
 });
 
-test("GetFranchises", async () => {
+test("getFranchises", async () => {
   const franchiseRes = await request(app)
     .get("/api/franchise")
     .set("Authorization", `Bearer ${testUserAuthToken}`);
@@ -37,7 +37,7 @@ test("GetFranchises", async () => {
   expect(franchiseRes.body).not.toBeNull();
 });
 
-test("CreateFranchise", async () => {
+test("createFranchise", async () => {
   const testFranchise = {
     name: "pizza franchize-" + Math.random().toString(36).substring(2, 12),
     admins: [testUser],
@@ -66,7 +66,7 @@ test("getUsersFranchises", async () => {
   expect(franchiseRes.body).not.toBeNull();
 });
 
-test("DeleteFranchise", async () => {
+test("deleteFranchise", async () => {
   const testFranchise = {
     name: "pizza franchize-" + Math.random().toString(36).substring(2, 12),
     admins: [testUser],

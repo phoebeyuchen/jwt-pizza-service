@@ -27,13 +27,13 @@ beforeAll(async () => {
   testUserAuthToken = loginRes.body.token;
 });
 
-test("Get pizza menu", async () => {
+test("get pizza menu", async () => {
   const menuRes = await request(app).get("/api/order/menu");
   expect(menuRes.status).toBe(200);
   expect(menuRes.body).not.toBeNull();
 });
 
-test("Create order", async () => {
+test("create order", async () => {
   const createMenuItemReq = await request(app)
     .put("/api/order/menu")
     .set("Authorization", `Bearer ${testUserAuthToken}`)
@@ -70,7 +70,7 @@ test("Create order", async () => {
   expect(orderRes.body.order.reportSlowPizzaToFactoryUrl).not.toBeNull();
 });
 
-test("Get orders", async () => {
+test("get orders", async () => {
   const orderReq = {
     franchiseId: 1,
     storeId: "1",
