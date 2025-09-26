@@ -8,7 +8,6 @@ let testUserAuthToken;
 let testUserId;
 let adminUser;
 let adminAuthToken;
-let adminUserId;
 
 if (process.env.VSCODE_INSPECTOR_OPTIONS) {
   jest.setTimeout(500000);
@@ -38,7 +37,6 @@ beforeAll(async () => {
   adminUser = await createAdminUser();
   const adminLoginRes = await request(app).put("/api/auth").send(adminUser);
   adminAuthToken = adminLoginRes.body.token;
-  adminUserId = adminLoginRes.body.user.id;
 });
 
 test("get authenticated user", async () => {
