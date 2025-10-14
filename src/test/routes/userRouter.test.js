@@ -138,3 +138,56 @@ test("admin updates other user", async () => {
   
   testUser.name = updateData.name;
 });
+
+test('list users unauthorized', async () => {
+  const listUsersRes = await request(app).get('/api/user');
+  expect(listUsersRes.status).toBe(401);
+});
+
+test('list users as non-admin', async () => {
+  const listUsersRes = await request(app)
+    .get('/api/user')
+    .set('Authorization', 'Bearer ' + testUserAuthToken);
+  expect(listUsersRes.status).toBe(403);
+});
+
+test('list users as admin', async () => {
+  const listUsersRes = await request(app)
+    .get('/api/user')
+    .set('Authorization', 'Bearer ' + adminAuthToken);
+  expect(listUsersRes.status).toBe(200);
+  expect(listUsersRes.body.users).toBeDefined();
+  expect(Array.isArray(listUsersRes.body.users)).toBe(true);
+  expect(listUsersRes.body.more).toBeDefined();
+});
+
+test('list users with pagination', async () => {
+  const res = await request(app)
+    .get('/api/user?page=0&limit=2')
+    .set('Authorization', `Bearer ${adminAuthToken}`);
+  
+  expect(res.status).toBe(200);
+  expect(res.body.users.length).toBeLessThanOrEqual(2);
+});
+
+test('list users with name filter', async () => {
+  // Create a user with a unique name just for this test
+  const uniqueName = 'UniqueTestUser' + Math.random().toString(36).substring(2, 8);
+  const uniqueUser = {
+    name: uniqueName,
+    email: `${Math.random().toString(36).substring(2, 12)}@test.com`,
+    password: 'test'
+  };
+  
+  await request(app).post('/api/auth').send(uniqueUser);
+  
+  // Search for this unique user
+  const res = await request(app)
+    .get(`/api/user?name=*${uniqueName}*`)
+    .set('Authorization', `Bearer ${adminAuthToken}`);
+  
+  expect(res.status).toBe(200);
+  const foundUser = res.body.users.find(u => u.name === uniqueName);
+  expect(foundUser).toBeDefined();
+  expect(foundUser.email).toBe(uniqueUser.email);
+});

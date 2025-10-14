@@ -15,6 +15,23 @@ userRouter.docs = [
     response: { id: 1, name: '常用名字', email: 'a@jwt.com', roles: [{ role: 'admin' }] },
   },
   {
+    method: 'GET',
+    path: '/api/user?page=1&limit=10&name=*',
+    requiresAuth: true,
+    description: 'Gets a list of users',
+    example: `curl -X GET localhost:3000/api/user -H 'Authorization: Bearer tttttt'`,
+    response: {
+      users: [
+        {
+          id: 1,
+          name: '常用名字',
+          email: 'a@jwt.com',
+          roles: [{ role: 'admin' }],
+        },
+      ],
+    },
+  },
+  {
     method: 'PUT',
     path: '/api/user/:userId',
     requiresAuth: true,
@@ -30,6 +47,25 @@ userRouter.get(
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
     res.json(req.user);
+  })
+);
+
+// listUsers
+userRouter.get(
+  '/',
+  authRouter.authenticateToken,
+  asyncHandler(async (req, res) => {
+    // Only admins can list users
+    if (!req.user.isRole(Role.Admin)) {
+      return res.status(403).json({ message: 'unauthorized' });
+    }
+
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const nameFilter = req.query.name || '*';
+
+    const [users, more] = await DB.getUsers(page, limit, nameFilter);
+    res.json({ users, more });
   })
 );
 
