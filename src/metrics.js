@@ -179,7 +179,6 @@ class Metrics {
     const authSuccessRate = Math.round((this.authSuccess - this.lastAuthSuccess) / timeDiffMinutes);
     const authFailureRate = Math.round((this.authFailure - this.lastAuthFailure) / timeDiffMinutes);
 
-    const pizzaSoldRate = Math.round((this.pizzasSold - this.lastPizzasSold) / timeDiffMinutes);
     const pizzaRevenueRate = Math.round((this.pizzaRevenue - this.lastPizzaRevenue) / timeDiffMinutes * 1000); // Convert to integer (thousandths)
 
     const avgServiceLatency = this.serviceLatencyCount > 0
